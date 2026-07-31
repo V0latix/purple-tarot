@@ -187,7 +187,7 @@ couleur annoncée.
 
 Ordre libre.
 
-### Purple Atout
+### Purple Tarot
 
 Les trois prochaines cartes doivent comprendre : - une rouge ; - une
 noire ; - un atout.
