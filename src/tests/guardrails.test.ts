@@ -47,6 +47,21 @@ describe("garde-fous", () => {
     ).toBe(false);
   });
 
+  it("refuse une chaîne de raisonnement visible", () => {
+    expect(
+      validateModelAnswer(
+        "The user is asking about the rules. Let me analyze the relevant sections step by step.",
+        sections,
+      ).valid,
+    ).toBe(false);
+    expect(
+      validateModelAnswer(
+        "<think>Analyse interne des règles</think>Tu peux jouer normalement.",
+        sections,
+      ).valid,
+    ).toBe(false);
+  });
+
   it("accepte les nombres déjà présents dans la question", () => {
     expect(
       validateModelAnswer(
@@ -115,6 +130,9 @@ describe("garde-fous", () => {
     expect(messages[1]!.content).toContain("<livret_regles>");
     expect(messages[1]!.content).toContain("MARQUEUR_LIVRET_COMPLET");
     expect(messages[1]!.content).toContain("Que fait le 21 ?");
+    expect(messages[1]!.content).toContain(
+      "uniquement la réponse finale en français",
+    );
   });
 
   it("utilise le fallback extractif si OpenRouter échoue", async () => {
@@ -182,7 +200,11 @@ describe("garde-fous", () => {
     const question =
       "C’est à moi de jouer, c’est mon premier tour de jeu et il y a trois atouts sur le pli. Quelles sont mes options ?";
     const provider: LLMProvider = {
-      ask: vi.fn().mockRejectedValue(new Error("indisponible")),
+      ask: vi.fn().mockResolvedValue({
+        content:
+          "The user is asking about their options. Let me analyze all relevant sections step by step before giving the final answer.",
+        model: "test-model",
+      }),
     };
     const result = await answerRuleQuestion(question, {
       provider,
@@ -198,6 +220,7 @@ describe("garde-fous", () => {
     expect(result.answer).toContain("annoncer immédiatement « Je pisse ! »");
     expect(result.answer).toContain("J’ouvre à une couleur");
     expect(result.answer).not.toContain("Poignée");
+    expect(result.answer).not.toContain("The user is asking");
     expect(result.usedLLM).toBe(false);
   });
 });

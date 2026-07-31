@@ -13,6 +13,8 @@ ${question}
 </question_utilisateur>
 
 Instruction :
+- Retourne uniquement la réponse finale en français, sans raisonnement, analyse, brouillon ni préambule.
+- Limite la réponse à 90 mots et 2 à 4 phrases courtes.
 - Réponds uniquement à partir du livret complet ci-dessus.
 - Cherche librement dans toutes les sections et croise toutes les règles pertinentes.
 - Commence par la conséquence concrète pour le joueur, puis explique pourquoi.

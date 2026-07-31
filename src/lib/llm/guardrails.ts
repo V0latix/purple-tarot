@@ -9,6 +9,11 @@ const UNSAFE_PHRASES = [
   "je pense",
   "normalement",
   "probablement",
+  "the user is asking",
+  "let me analyze",
+  "let me think",
+  "we need to answer",
+  "chain of thought",
 ];
 
 const NUMBER_WORDS: Record<string, string> = {
@@ -101,6 +106,10 @@ export function validateModelAnswer(
 
   if (!normalizedAnswer) return { valid: false, reason: "empty" };
   if (sources.length === 0) return { valid: false, reason: "missing_sources" };
+  if (answer.length > 900) return { valid: false, reason: "too_long" };
+  if (/<\/?think>|reasoning\s*:/i.test(answer)) {
+    return { valid: false, reason: "reasoning_exposed" };
+  }
 
   if (
     UNSAFE_PHRASES.some((phrase) =>

@@ -76,7 +76,11 @@ async function requestOpenRouter(
       model,
       messages,
       temperature: 0.1,
-      max_tokens: 350,
+      max_tokens: 220,
+      reasoning: {
+        effort: "none",
+        exclude: true,
+      },
     }),
     signal,
   });
