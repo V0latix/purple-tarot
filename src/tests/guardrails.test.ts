@@ -70,8 +70,11 @@ describe("garde-fous", () => {
     ).toBe(true);
   });
 
-  it("ne sollicite pas le provider pour une question inconnue", async () => {
-    const ask = vi.fn();
+  it("laisse le modèle consulter le livret complet même si la recherche locale ne trouve rien", async () => {
+    const ask = vi.fn().mockResolvedValue({
+      content: "Je ne trouve pas cette règle dans les règles actuelles.",
+      model: "test-model",
+    });
     const provider: LLMProvider = { ask };
     const result = await answerRuleQuestion(
       "Est-ce que la Dame de cœur donne une pénalité ?",
@@ -81,7 +84,37 @@ describe("garde-fous", () => {
     expect(result.answer).toBe(
       "Je ne trouve pas cette règle dans les règles actuelles.",
     );
-    expect(ask).not.toHaveBeenCalled();
+    expect(ask).toHaveBeenCalledOnce();
+    expect(result.usedLLM).toBe(true);
+    expect(result.provider).toBe("openrouter");
+  });
+
+  it("envoie le livret Markdown complet au modèle", async () => {
+    const answer = "Le 21 distribue un cul sec si l’annonce est réussie grâce à lui.";
+    const ask = vi.fn().mockResolvedValue({
+      content: answer,
+      model: "test-model",
+    });
+    const provider: LLMProvider = { ask };
+    const rulebookMarkdown = [
+      "# Purple Tarot",
+      "## Règle sans rapport mais présente",
+      "MARQUEUR_LIVRET_COMPLET",
+      "## Le 21",
+      le21.content,
+    ].join("\n\n");
+
+    const result = await answerRuleQuestion("Que fait le 21 ?", {
+      provider,
+      sections,
+      rulebookMarkdown,
+    });
+
+    expect(result.answer).toBe(answer);
+    const messages = ask.mock.calls[0]![0];
+    expect(messages[1]!.content).toContain("<livret_regles>");
+    expect(messages[1]!.content).toContain("MARQUEUR_LIVRET_COMPLET");
+    expect(messages[1]!.content).toContain("Que fait le 21 ?");
   });
 
   it("utilise le fallback extractif si OpenRouter échoue", async () => {

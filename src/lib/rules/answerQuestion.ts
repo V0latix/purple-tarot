@@ -23,14 +23,28 @@ function sectionTitle(section?: RuleSection): string {
 type AnswerDependencies = {
   provider?: LLMProvider;
   sections?: RuleSection[];
+  rulebookMarkdown?: string;
 };
+
+function sectionsAsMarkdown(sections: RuleSection[]): string {
+  return sections
+    .map((section) => {
+      const heading = "#".repeat(section.level);
+      return `${heading} ${section.title}\n\n${section.content}`;
+    })
+    .join("\n\n");
+}
 
 export async function answerRuleQuestion(
   question: string,
   dependencies: AnswerDependencies = {},
 ): Promise<AskResponse> {
-  const sections =
-    dependencies.sections ?? (await loadRules()).sections;
+  const loadedRules = dependencies.sections ? undefined : await loadRules();
+  const sections = dependencies.sections ?? loadedRules!.sections;
+  const rulebookMarkdown =
+    dependencies.rulebookMarkdown ??
+    loadedRules?.markdown ??
+    sectionsAsMarkdown(sections);
   const candidates = searchRules(sections, question, 8).filter(
     (result) => result.section.content.trim().length > 0,
   );
@@ -83,24 +97,15 @@ export async function answerRuleQuestion(
     content,
   }));
 
-  if (sources.length === 0) {
-    return {
-      answer: NOT_FOUND_ANSWER,
-      sources: [],
-      usedLLM: false,
-      provider: "extractive",
-    };
-  }
-
   try {
     const provider = dependencies.provider ?? openRouterProvider;
     const result = await provider.ask([
       { role: "system", content: PURPLE_SYSTEM_PROMPT },
-      { role: "user", content: buildPrompt(question, sources) },
+      { role: "user", content: buildPrompt(question, rulebookMarkdown) },
     ]);
     const validation = validateModelAnswer(
       result.content,
-      sources,
+      sections,
       question,
     );
 

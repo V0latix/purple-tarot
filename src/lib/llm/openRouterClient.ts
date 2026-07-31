@@ -107,7 +107,7 @@ export async function askOpenRouter(
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15_000);
+    const timeout = setTimeout(() => controller.abort(), 30_000);
 
     try {
       return await requestOpenRouter(messages, controller.signal);
