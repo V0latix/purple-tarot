@@ -54,7 +54,7 @@ async function requestOpenRouter(
     process.env.OPENROUTER_SITE_URL ?? "http://localhost:3000";
   const appName =
     process.env.OPENROUTER_APP_NAME ??
-    "Purple Tarot 2 Rules Assistant";
+    "Purple Tarot Rules Assistant";
 
   const response = await fetch(`${baseUrl}/chat/completions`, {
     method: "POST",

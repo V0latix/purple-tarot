@@ -71,9 +71,9 @@ export const RULE_ALIASES: Record<string, string[]> = {
     "couleur plus atout",
     "couleur + atout",
   ],
-  "purple atout": [
-    "purple atout",
+  "purple tarot": [
     "purple tarot",
+    "purple atout",
     "rouge noire atout",
     "rouge noire et atout",
   ],

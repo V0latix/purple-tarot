@@ -2,7 +2,7 @@ import "server-only";
 
 import { buildPrompt } from "@/lib/llm/buildPrompt";
 import {
-  buildExtractiveFallback,
+  buildContextualFallback,
   NOT_FOUND_ANSWER,
   validateModelAnswer,
 } from "@/lib/llm/guardrails";
@@ -11,6 +11,7 @@ import type { LLMProvider } from "@/lib/llm/provider";
 import { loadRules } from "@/lib/rules/loadRules";
 import { searchRules } from "@/lib/rules/searchRules";
 import type { AskResponse, RuleSection } from "@/lib/rules/types";
+import { normalizeText } from "@/lib/utils/normalize";
 import { PURPLE_SYSTEM_PROMPT } from "@/prompts/purple-system-prompt";
 
 const STRONG_SOURCE_RATIO = 0.75;
@@ -33,7 +34,28 @@ export async function answerRuleQuestion(
   const results = candidates
     .filter((result) => result.score >= bestScore * STRONG_SOURCE_RATIO)
     .slice(0, 3);
-  const sources = results.map((result) => result.section);
+  let sources = results.map((result) => result.section);
+  const primaryTitle = normalizeText(sources[0]?.title ?? "");
+
+  if (primaryTitle.startsWith("purple ")) {
+    const unrelatedColorSections = new Set(["rouge", "noir", "couleur"]);
+    sources = sources.filter(
+      (source, index) =>
+        index === 0 || !unrelatedColorSections.has(normalizeText(source.title)),
+    );
+
+    const failureRule = sections.find(
+      (section) => normalizeText(section.title) === "annonce",
+    );
+    if (
+      failureRule &&
+      !sources.some((source) => source.id === failureRule.id)
+    ) {
+      sources.push(failureRule);
+    }
+    sources = sources.slice(0, 3);
+  }
+
   const serializedSources = sources.map(({ id, title, content }) => ({
     id,
     title,
@@ -66,7 +88,7 @@ export async function answerRuleQuestion(
         answer:
           result.content === NOT_FOUND_ANSWER
             ? NOT_FOUND_ANSWER
-            : buildExtractiveFallback(sources[0]),
+            : buildContextualFallback(question, sources),
         sources: serializedSources,
         usedLLM: result.content === NOT_FOUND_ANSWER,
         provider:
@@ -93,11 +115,11 @@ export async function answerRuleQuestion(
     };
   } catch {
     return {
-      answer: buildExtractiveFallback(sources[0]),
+      answer: buildContextualFallback(question, sources),
       sources: serializedSources,
       usedLLM: false,
       provider: "extractive",
-      error: "Le service IA est indisponible ; un extrait fiable est affiché.",
+      error: "Le service IA est indisponible ; une réponse fondée sur les règles est affichée.",
     };
   }
 }

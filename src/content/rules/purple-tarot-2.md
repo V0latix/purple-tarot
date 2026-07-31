@@ -74,7 +74,7 @@ cartes.
 
 Si elle est correcte, les cartes restent dans le pli.
 
-Si elle échoue, le joueur perd immédiatement, bois autant de gorgée que de carte dans le pli, et le pli est défaussé.
+Si elle échoue, le joueur perd immédiatement, boit autant de gorgées qu'il y a de cartes dans le pli, et le pli est défaussé.
 
 ------------------------------------------------------------------------
 

@@ -3,10 +3,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Purple Tarot 2 — Assistant des règles",
+  title: "Purple Tarot — Assistant des règles",
   description:
-    "Consultez les règles de Purple Tarot 2 et obtenez une réponse sourcée pendant la partie.",
-  applicationName: "Purple Tarot 2 Rules Assistant",
+    "Consultez les règles de Purple Tarot et obtenez une réponse sourcée pendant la partie.",
+  applicationName: "Purple Tarot Rules Assistant",
 };
 
 export const viewport: Viewport = {

@@ -57,6 +57,19 @@ describe("garde-fous", () => {
     ).toBe(true);
   });
 
+  it("reconnaît un nombre écrit en chiffres quand la source l'écrit en lettres", () => {
+    const purpleTarot = sections.find(
+      (section) => section.title === "Purple Tarot",
+    )!;
+
+    expect(
+      validateModelAnswer(
+        "Les 3 cartes doivent contenir une rouge, une noire et un atout.",
+        [purpleTarot],
+      ).valid,
+    ).toBe(true);
+  });
+
   it("ne sollicite pas le provider pour une question inconnue", async () => {
     const ask = vi.fn();
     const provider: LLMProvider = { ask };
@@ -85,9 +98,9 @@ describe("garde-fous", () => {
     expect(result.answer).toBe(buildExtractiveFallback(le21));
   });
 
-  it("associe l'ancien nom Purple tarot à la règle Purple Atout", async () => {
+  it("combine Purple Tarot et la pénalité générale", async () => {
     const answer =
-      "Le Purple tarot n’est pas validé : il manque un atout, donc son effet ne s’applique pas.";
+      "Tu bois autant de gorgées qu’il y a de cartes dans le pli : il manque un atout, donc le Purple Tarot est perdu.";
     const ask = vi.fn().mockResolvedValue({
       content: answer,
       model: "test-model",
@@ -100,9 +113,35 @@ describe("garde-fous", () => {
 
     expect(result.answer).toBe(answer);
     expect(result.sources.map((source) => source.title)).toEqual([
-      "Purple Atout",
+      "Purple Tarot",
+      "Annonce",
     ]);
     expect(result.usedLLM).toBe(true);
     expect(ask).toHaveBeenCalledOnce();
+  });
+
+  it("donne une réponse contextualisée si OpenRouter est indisponible", async () => {
+    const question =
+      "J’ai annoncé un Purple tarot et j’ai eu 2 cartes rouges et 1 carte noire. Qu’est-ce qui se passe ?";
+    const provider: LLMProvider = {
+      ask: vi.fn().mockRejectedValue(new Error("indisponible")),
+    };
+    const result = await answerRuleQuestion(question, {
+      provider,
+      sections,
+    });
+
+    expect(result.answer).toBe(
+      "Tu bois autant de gorgées qu’il y a de cartes dans le pli, car Purple Tarot accepte uniquement une carte rouge, une carte noire et un atout, dans n’importe quel ordre. Ici, il manque l’atout : l’annonce est donc perdue et le pli est défaussé.",
+    );
+    expect(result.answer).toContain(
+      "Tu bois autant de gorgées qu’il y a de cartes dans le pli",
+    );
+    expect(result.answer).toContain("il manque l’atout");
+    expect(result.sources.map((source) => source.title)).toEqual([
+      "Purple Tarot",
+      "Annonce",
+    ]);
+    expect(result.usedLLM).toBe(false);
   });
 });

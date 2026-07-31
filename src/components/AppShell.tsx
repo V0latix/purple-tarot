@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenText, MessageCircleMore, Sparkles } from "lucide-react";
+import { BookOpenText, MessageCircleMore } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 import { ChatPanel } from "@/components/ChatPanel";
@@ -48,14 +48,9 @@ export function AppShell({ preamble, sections }: AppShellProps) {
         <div className="brand">
           <div className="brand-seal" aria-hidden="true">
             <span>♠</span>
-            <i>II</i>
           </div>
           <div>
-            <p className="brand-kicker">
-              <Sparkles size={11} aria-hidden="true" />
-              Livret interactif
-            </p>
-            <h1>Purple Tarot <em>2</em></h1>
+            <h1>Purple Tarot</h1>
           </div>
         </div>
         <div className="suit-line" aria-label="Couleurs du tarot">
@@ -91,7 +86,7 @@ export function AppShell({ preamble, sections }: AppShellProps) {
       <div className="workspace">
         <section
           className={`rules-pane ${activeTab === "rules" ? "mobile-active" : ""}`}
-          aria-label="Règles Purple Tarot 2"
+          aria-label="Règles Purple Tarot"
         >
           <div className="pane-heading">
             <div>
