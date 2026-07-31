@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Purple Tarot 2 Rules Assistant
 
-## Getting Started
+Une application web responsive pour consulter les règles de Purple Tarot 2 et poser des questions à un LLM via OpenRouter.
 
-First, run the development server:
+## Principe
+
+Le fichier Markdown [`src/content/rules/purple-tarot-2.md`](src/content/rules/purple-tarot-2.md) est l’unique source de vérité. Le modèle ne reçoit que les sections pertinentes retrouvées localement et l’interface affiche les sources sous chaque réponse.
+
+Si OpenRouter est indisponible ou si aucune clé n’est configurée, l’application reste fonctionnelle grâce à un fallback extractif fondé sur le même Markdown.
+
+## Installation
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir ensuite [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables d’environnement
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+OPENROUTER_API_KEY=
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_MODEL=openrouter/free
+OPENROUTER_SITE_URL=http://localhost:3000
+OPENROUTER_APP_NAME=Purple Tarot 2 Rules Assistant
+```
 
-## Learn More
+`OPENROUTER_API_KEY` reste exclusivement côté serveur. Ne créez jamais de variable `NEXT_PUBLIC_OPENROUTER_API_KEY`.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev        # serveur local
+npm run test       # tests unitaires
+npm run lint       # ESLint
+npm run typecheck  # vérification TypeScript
+npm run build      # build de production
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Modifier les règles
 
-## Deploy on Vercel
+Modifier uniquement :
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+src/content/rules/purple-tarot-2.md
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Le parser et l’index de recherche sont reconstruits automatiquement.
+
+## Fonctionnement IA
+
+1. La question est normalisée.
+2. Les sections pertinentes sont retrouvées localement.
+3. Seules ces sections sont envoyées à OpenRouter.
+4. La réponse est contrôlée par des garde-fous anti-hallucination.
+5. Les sources sont affichées et restent accessibles en un clic.
+6. En cas d’échec, un extrait direct du livret est renvoyé.
+
+## Limites et responsabilité
+
+L’application n’encourage pas la consommation excessive d’alcool. Les pénalités peuvent être remplacées par des alternatives sans alcool.
