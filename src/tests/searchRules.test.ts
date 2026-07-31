@@ -28,6 +28,10 @@ describe("searchRules", () => {
     ["5 atouts", "Double poignée"],
     ["6 cartes sans atout", "Misère d’atout"],
     ["merci paquet", "Le paquet"],
+    [
+      "J’ai demandé un Purple tarot avec un cœur et un trèfle",
+      "Purple tarot",
+    ],
   ])("associe « %s » à « %s »", (question, expectedTitle) => {
     const results = searchRules(sections, question);
     expect(results[0]?.section.title).toBe(expectedTitle);

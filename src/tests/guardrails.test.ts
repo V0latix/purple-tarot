@@ -47,6 +47,16 @@ describe("garde-fous", () => {
     ).toBe(false);
   });
 
+  it("accepte les nombres déjà présents dans la question", () => {
+    expect(
+      validateModelAnswer(
+        "Avec ton 8, si tu remportes le pli avec le 21, tu distribues un cul sec.",
+        [le21],
+        "J’ai un 8 et je demande si la règle du 21 s’applique.",
+      ).valid,
+    ).toBe(true);
+  });
+
   it("ne sollicite pas le provider pour une question inconnue", async () => {
     const ask = vi.fn();
     const provider: LLMProvider = { ask };
@@ -73,5 +83,26 @@ describe("garde-fous", () => {
     expect(result.usedLLM).toBe(false);
     expect(result.provider).toBe("extractive");
     expect(result.answer).toBe(buildExtractiveFallback(le21));
+  });
+
+  it("envoie uniquement la règle Purple tarot au modèle", async () => {
+    const answer =
+      "Le Purple tarot n’est pas validé : il manque un atout, donc son effet ne s’applique pas.";
+    const ask = vi.fn().mockResolvedValue({
+      content: answer,
+      model: "test-model",
+    });
+    const provider: LLMProvider = { ask };
+    const result = await answerRuleQuestion(
+      "J’ai demandé un Purple tarot et j’ai eu un 8 de cœur, un 7 de trèfle et un cavalier de pique.",
+      { provider, sections },
+    );
+
+    expect(result.answer).toBe(answer);
+    expect(result.sources.map((source) => source.title)).toEqual([
+      "Purple tarot",
+    ]);
+    expect(result.usedLLM).toBe(true);
+    expect(ask).toHaveBeenCalledOnce();
   });
 });

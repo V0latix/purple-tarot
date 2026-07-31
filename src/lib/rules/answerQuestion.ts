@@ -13,6 +13,8 @@ import { searchRules } from "@/lib/rules/searchRules";
 import type { AskResponse, RuleSection } from "@/lib/rules/types";
 import { PURPLE_SYSTEM_PROMPT } from "@/prompts/purple-system-prompt";
 
+const STRONG_SOURCE_RATIO = 0.75;
+
 type AnswerDependencies = {
   provider?: LLMProvider;
   sections?: RuleSection[];
@@ -24,7 +26,13 @@ export async function answerRuleQuestion(
 ): Promise<AskResponse> {
   const sections =
     dependencies.sections ?? (await loadRules()).sections;
-  const results = searchRules(sections, question, 4);
+  const candidates = searchRules(sections, question, 8).filter(
+    (result) => result.section.content.trim().length > 0,
+  );
+  const bestScore = candidates[0]?.score ?? 0;
+  const results = candidates
+    .filter((result) => result.score >= bestScore * STRONG_SOURCE_RATIO)
+    .slice(0, 3);
   const sources = results.map((result) => result.section);
   const serializedSources = sources.map(({ id, title, content }) => ({
     id,
@@ -47,7 +55,11 @@ export async function answerRuleQuestion(
       { role: "system", content: PURPLE_SYSTEM_PROMPT },
       { role: "user", content: buildPrompt(question, sources) },
     ]);
-    const validation = validateModelAnswer(result.content, sources);
+    const validation = validateModelAnswer(
+      result.content,
+      sources,
+      question,
+    );
 
     if (!validation.valid || result.content === NOT_FOUND_ANSWER) {
       return {

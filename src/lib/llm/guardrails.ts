@@ -12,7 +12,7 @@ const UNSAFE_PHRASES = [
 ];
 
 export function buildExtractiveFallback(section?: RuleSection): string {
-  if (!section) return NOT_FOUND_ANSWER;
+  if (!section?.content.trim()) return NOT_FOUND_ANSWER;
 
   return `D’après la règle « ${section.title} » :\n${section.content}`;
 }
@@ -20,6 +20,7 @@ export function buildExtractiveFallback(section?: RuleSection): string {
 export function validateModelAnswer(
   answer: string,
   sources: RuleSection[],
+  question = "",
 ): { valid: boolean; reason?: string } {
   const normalizedAnswer = normalizeText(answer);
 
@@ -50,7 +51,10 @@ export function validateModelAnswer(
     return { valid: false, reason: "low_source_overlap" };
   }
 
-  const sourceNumbers = new Set(sourceText.match(/\b\d+\b/g) ?? []);
+  const supportedNumbers = normalizeText(`${sourceText} ${question}`);
+  const sourceNumbers = new Set(
+    supportedNumbers.match(/\b\d+\b/g) ?? [],
+  );
   const answerNumbers = normalizedAnswer.match(/\b\d+\b/g) ?? [];
 
   if (answerNumbers.some((number) => !sourceNumbers.has(number))) {

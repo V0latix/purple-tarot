@@ -6,7 +6,8 @@ export const RULE_ALIASES: Record<string, string[]> = {
     "couleur annoncee",
     "couleur + atout",
   ],
-  "purple atout": [
+  "purple tarot": [
+    "purple tarot",
     "purple atout",
     "rouge noire atout",
     "rouge noire et atout",
@@ -31,7 +32,7 @@ export const RULE_ALIASES: Record<string, string[]> = {
     "sans atout",
     "6 cartes sans atout",
   ],
-  petit: ["petit", "le petit", "accent du sud"],
+  "annonce du petit": ["petit", "le petit", "accent du sud"],
   "petit au bout": ["petit au bout", "dernier pli", "petit dernier pli"],
   "poteau ou bout": [
     "poteau",

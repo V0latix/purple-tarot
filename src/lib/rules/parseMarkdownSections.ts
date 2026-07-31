@@ -6,15 +6,18 @@ import {
   slugifyTitle,
 } from "@/lib/utils/normalize";
 
+function withoutLeadingArticle(value: string): string {
+  return value.replace(/^(?:le|la|les|l)\s+/, "");
+}
+
 function keywordsFor(title: string, content: string): string[] {
   const normalizedTitle = normalizeText(title);
   const matchingAliases = Object.entries(RULE_ALIASES)
     .filter(([canonical]) => {
       const normalizedCanonical = normalizeText(canonical);
       return (
-        normalizedTitle === normalizedCanonical ||
-        normalizedTitle.includes(normalizedCanonical) ||
-        normalizedCanonical.includes(normalizedTitle)
+        withoutLeadingArticle(normalizedTitle) ===
+        withoutLeadingArticle(normalizedCanonical)
       );
     })
     .flatMap(([, aliases]) => aliases);

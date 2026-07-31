@@ -17,12 +17,12 @@ Effet : appliquer la règle Purple.
 Condition : une carte de la couleur annoncée + un atout.  
 Effet : appliquer la règle Purple couleur.
 
-### Purple atout
+### Purple tarot
 Condition : une carte rouge + une carte noire + un atout.  
-Effet : appliquer la règle Purple atout.
+Effet : appliquer la règle Purple tarot.
 
 ### Purple bout
-Condition : Purple atout où l’atout est remplacé par un bout.  
+Condition : Purple tarot où l’atout est remplacé par un bout.
 Effet : le joueur choisit deux personnes qui boivent chacune un cul sec.
 
 ---
@@ -108,7 +108,7 @@ S’il fait tomber le paquet : il boit cul sec.
 
 ## Tu gardes
 
-Lors d’un Purple Atout, à la deuxième carte, le dealer peut annoncer :
+Lors d’un Purple tarot, à la deuxième carte, le dealer peut annoncer :
 
 - Tu gardes : multiplicateur x2
 - Tu gardes sans : multiplicateur x4
