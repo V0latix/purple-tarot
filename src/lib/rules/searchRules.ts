@@ -5,7 +5,10 @@ import type {
 } from "@/lib/rules/types";
 import { meaningfulTerms, normalizeText } from "@/lib/utils/normalize";
 
-const MIN_RELEVANCE_SCORE = 6;
+// A long, detailed rulebook naturally repeats generic words such as "carte",
+// "joueur" and "pénalité". Requiring more than two incidental content matches
+// prevents an unrelated question from being sent to the model with a bad source.
+const MIN_RELEVANCE_SCORE = 10;
 
 function includesPhrase(haystack: string, needle: string): boolean {
   return needle.length > 0 && (` ${haystack} `).includes(` ${needle} `);
@@ -28,6 +31,14 @@ export function searchRules(
 
   const matchedAliasGroups = Object.entries(RULE_ALIASES).filter(
     ([canonical, aliases]) => {
+      if (
+        canonical === "purple classique" &&
+        /\bpurple (?:couleur|tarot|atout|bout)\b/.test(normalizedQuestion) &&
+        !includesPhrase(normalizedQuestion, "purple classique")
+      ) {
+        return false;
+      }
+
       const phrases = [canonical, ...aliases].map(normalizeText);
       return phrases.some((phrase) =>
         includesPhrase(normalizedQuestion, phrase),
