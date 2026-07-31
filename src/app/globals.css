@@ -748,6 +748,31 @@ input:focus-visible {
   white-space: pre-line;
 }
 
+.message-bubble p + p,
+.message-bubble ul + p {
+  margin-top: 8px;
+}
+
+.message-bubble ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.message-bubble li {
+  margin: 2px 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.message-bubble strong {
+  color: var(--purple-800);
+  font-weight: 700;
+}
+
+.user .message-bubble strong {
+  color: inherit;
+}
+
 .answer-meta {
   display: flex;
   align-items: center;

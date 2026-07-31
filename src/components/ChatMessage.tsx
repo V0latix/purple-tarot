@@ -1,6 +1,8 @@
 "use client";
 
 import { Bot, Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { RuleSources } from "@/components/RuleSources";
 import type { AskResponse } from "@/lib/rules/types";
@@ -32,7 +34,13 @@ export function ChatMessage({
       )}
       <div className="message-body">
         <div className="message-bubble">
-          <p>{message.content}</p>
+          {isAssistant ? (
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {message.content}
+            </ReactMarkdown>
+          ) : (
+            <p>{message.content}</p>
+          )}
         </div>
         {message.result && (
           <>
