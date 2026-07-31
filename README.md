@@ -23,7 +23,7 @@ Ouvrir ensuite [http://localhost:3000](http://localhost:3000).
 ```env
 OPENROUTER_API_KEY=
 OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
-OPENROUTER_MODEL=openrouter/free
+OPENROUTER_MODEL=nvidia/nemotron-3-ultra-550b-a55b:free
 OPENROUTER_SITE_URL=http://localhost:3000
 OPENROUTER_APP_NAME=Purple Tarot 2 Rules Assistant
 ```

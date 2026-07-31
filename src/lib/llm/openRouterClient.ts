@@ -55,7 +55,9 @@ async function requestOpenRouter(
 
   const baseUrl =
     process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1";
-  const model = process.env.OPENROUTER_MODEL ?? "openrouter/free";
+  const model =
+    process.env.OPENROUTER_MODEL ??
+    "nvidia/nemotron-3-ultra-550b-a55b:free";
   const siteUrl =
     process.env.OPENROUTER_SITE_URL ?? "http://localhost:3000";
   const appName =
