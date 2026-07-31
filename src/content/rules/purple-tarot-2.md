@@ -199,6 +199,7 @@ Ordre libre.
 
 Les trois prochaines cartes doivent comprendre : - une rouge ; - une
 noire ; - un Bout.
+Dans ce cas l'excuse ne peut pas a la fois compté pour le bout et remplacé une carte de couleur avec son effet de joker. 
 
 En cas de réussite, le joueur choisit deux personnes qui boivent un cul
 sec.
