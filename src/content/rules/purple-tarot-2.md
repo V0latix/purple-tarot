@@ -92,6 +92,7 @@ Si elle échoue, le joueur perd immédiatement, boit autant de gorgées qu'il y 
     lorsque leur condition apparaît. Si une nouvelle carte est révélée,
     l'occasion est définitivement perdue.
 8.  En cas de désaccord, la décision finale appartient à la table.
+9.  Lorsqu'un joueur annonce plus ou moins c'est toujours par rapport a la derniere carte révélé
 
 ------------------------------------------------------------------------
 
