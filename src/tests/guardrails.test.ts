@@ -85,7 +85,7 @@ describe("garde-fous", () => {
     expect(result.answer).toBe(buildExtractiveFallback(le21));
   });
 
-  it("envoie uniquement la règle Purple tarot au modèle", async () => {
+  it("associe l'ancien nom Purple tarot à la règle Purple Atout", async () => {
     const answer =
       "Le Purple tarot n’est pas validé : il manque un atout, donc son effet ne s’applique pas.";
     const ask = vi.fn().mockResolvedValue({
@@ -100,7 +100,7 @@ describe("garde-fous", () => {
 
     expect(result.answer).toBe(answer);
     expect(result.sources.map((source) => source.title)).toEqual([
-      "Purple tarot",
+      "Purple Atout",
     ]);
     expect(result.usedLLM).toBe(true);
     expect(ask).toHaveBeenCalledOnce();

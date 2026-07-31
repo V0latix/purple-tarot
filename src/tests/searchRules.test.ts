@@ -24,13 +24,16 @@ describe("searchRules", () => {
   it.each([
     ["21", "Le 21"],
     ["vingt et un", "Le 21"],
-    ["paquet sur la tête", "Défi du dealer"],
-    ["5 atouts", "Double poignée"],
-    ["6 cartes sans atout", "Misère d’atout"],
-    ["merci paquet", "Le paquet"],
+    ["paquet sur la tête", "L'Excuse"],
+    ["5 atouts", "Double Poignée"],
+    ["6 cartes sans atout", "Misère d'atout"],
+    ["merci paquet", "16. Divers"],
+    ["comment fonctionne le chien", "14. Le Chien"],
+    ["comment marche intérieur", "Intérieur"],
+    ["quelle est la valeur du cavalier", "6. Valeur des cartes"],
     [
       "J’ai demandé un Purple tarot avec un cœur et un trèfle",
-      "Purple tarot",
+      "Purple Atout",
     ],
   ])("associe « %s » à « %s »", (question, expectedTitle) => {
     const results = searchRules(sections, question);

@@ -7,7 +7,9 @@ import {
 } from "@/lib/utils/normalize";
 
 function withoutLeadingArticle(value: string): string {
-  return value.replace(/^(?:le|la|les|l)\s+/, "");
+  return value
+    .replace(/^\d+\s+/, "")
+    .replace(/^(?:le|la|les|l)\s+/, "");
 }
 
 function keywordsFor(title: string, content: string): string[] {

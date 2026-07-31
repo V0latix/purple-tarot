@@ -15,7 +15,9 @@ function includesPhrase(haystack: string, needle: string): boolean {
 }
 
 function withoutLeadingArticle(value: string): string {
-  return value.replace(/^(?:le|la|les|l)\s+/, "");
+  return value
+    .replace(/^\d+\s+/, "")
+    .replace(/^(?:le|la|les|l)\s+/, "");
 }
 
 export function searchRules(
@@ -32,7 +34,7 @@ export function searchRules(
   const matchedAliasGroups = Object.entries(RULE_ALIASES).filter(
     ([canonical, aliases]) => {
       if (
-        canonical === "purple classique" &&
+        canonical === "purple" &&
         /\bpurple (?:couleur|tarot|atout|bout)\b/.test(normalizedQuestion) &&
         !includesPhrase(normalizedQuestion, "purple classique")
       ) {
