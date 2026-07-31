@@ -46,9 +46,14 @@ export function ChatMessage({
           <>
             <div className="answer-meta">
               <Sparkles aria-hidden="true" size={12} />
-              {message.result.usedLLM
-                ? "Réponse assistée par IA"
-                : "Réponse fondée sur les règles"}
+              {message.result.usedLLM ? (
+                <>
+                  Réponse IA
+                  {message.result.model && ` · ${message.result.model}`}
+                </>
+              ) : (
+                "Mode de secours local · aucune IA utilisée"
+              )}
             </div>
             <RuleSources
               sources={message.result.sources}

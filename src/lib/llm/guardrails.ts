@@ -60,6 +60,15 @@ export function buildContextualFallback(
     normalizedQuestion,
   );
   const mentionsAtout = /\batouts?\b/.test(normalizedQuestion);
+  const sourceTitles = sources.map((source) =>
+    normalizeText(source.title).replace(/^\d+\s+/, ""),
+  );
+  const hasJePisse = sourceTitles.includes("je pisse");
+  const hasNormalTurn = sourceTitles.includes("deroulement d un tour");
+  const hasOpeningRule = sourceTitles.includes("j ouvre a une couleur");
+  const hasThreeAtoutsOnPli =
+    /\b(?:3|trois) atouts?\b/.test(normalizedQuestion) &&
+    /\bpli\b/.test(normalizedQuestion);
 
   if (
     hasPurpleTarot &&
@@ -69,6 +78,15 @@ export function buildContextualFallback(
     !mentionsAtout
   ) {
     return "Tu bois autant de gorgées qu’il y a de cartes dans le pli, car Purple Tarot accepte uniquement une carte rouge, une carte noire et un atout, dans n’importe quel ordre. Ici, il manque l’atout : l’annonce est donc perdue et le pli est défaussé.";
+  }
+
+
+  if (hasJePisse && hasNormalTurn && hasThreeAtoutsOnPli) {
+    const openingOption = hasOpeningRule
+      ? " Comme c’est ta première annonce du tour, tu peux également choisir « J’ouvre à une couleur » : si cette couleur apparaît, tu peux arrêter immédiatement ton tour."
+      : "";
+
+    return `Tu peux jouer normalement et faire l’annonce principale de ton choix. Si les trois atouts du pli viennent bien d’être révélés consécutivement, tu peux aussi annoncer immédiatement « Je pisse ! » avant toute nouvelle carte : tu paries alors que la prochaine carte ne sera pas un atout.${openingOption}`;
   }
 
   return buildExtractiveFallback(sources[0]);

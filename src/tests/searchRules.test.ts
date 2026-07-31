@@ -32,6 +32,10 @@ describe("searchRules", () => {
     ["comment marche intérieur", "Intérieur"],
     ["quelle est la valeur du cavalier", "6. Valeur des cartes"],
     [
+      "C’est mon premier tour et il y a trois atouts sur le pli. Quelles sont mes options ?",
+      "Je pisse !",
+    ],
+    [
       "J’ai demandé un Purple tarot avec un cœur et un trèfle",
       "Purple Tarot",
     ],

@@ -32,7 +32,13 @@ class OpenRouterRequestError extends Error {
 
 function shouldRetry(error: unknown): boolean {
   if (error instanceof OpenRouterRequestError) {
-    return error.status === undefined || error.status >= 500;
+    return (
+      error.status === undefined ||
+      error.status === 408 ||
+      error.status === 409 ||
+      error.status === 429 ||
+      error.status >= 500
+    );
   }
   return error instanceof TypeError;
 }

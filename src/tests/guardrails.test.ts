@@ -144,4 +144,27 @@ describe("garde-fous", () => {
     ]);
     expect(result.usedLLM).toBe(false);
   });
+
+  it("distingue Je pisse d'une Poignée et propose les options du premier tour", async () => {
+    const question =
+      "C’est à moi de jouer, c’est mon premier tour de jeu et il y a trois atouts sur le pli. Quelles sont mes options ?";
+    const provider: LLMProvider = {
+      ask: vi.fn().mockRejectedValue(new Error("indisponible")),
+    };
+    const result = await answerRuleQuestion(question, {
+      provider,
+      sections,
+    });
+
+    expect(result.sources.map((source) => source.title)).toEqual([
+      "Je pisse !",
+      "7. Déroulement d'un tour",
+      "J'ouvre à une couleur",
+    ]);
+    expect(result.answer).toContain("Tu peux jouer normalement");
+    expect(result.answer).toContain("annoncer immédiatement « Je pisse ! »");
+    expect(result.answer).toContain("J’ouvre à une couleur");
+    expect(result.answer).not.toContain("Poignée");
+    expect(result.usedLLM).toBe(false);
+  });
 });

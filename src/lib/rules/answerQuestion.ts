@@ -16,6 +16,10 @@ import { PURPLE_SYSTEM_PROMPT } from "@/prompts/purple-system-prompt";
 
 const STRONG_SOURCE_RATIO = 0.75;
 
+function sectionTitle(section?: RuleSection): string {
+  return normalizeText(section?.title ?? "").replace(/^\d+\s+/, "");
+}
+
 type AnswerDependencies = {
   provider?: LLMProvider;
   sections?: RuleSection[];
@@ -35,17 +39,17 @@ export async function answerRuleQuestion(
     .filter((result) => result.score >= bestScore * STRONG_SOURCE_RATIO)
     .slice(0, 3);
   let sources = results.map((result) => result.section);
-  const primaryTitle = normalizeText(sources[0]?.title ?? "");
+  const primaryTitle = sectionTitle(sources[0]);
 
   if (primaryTitle.startsWith("purple ")) {
     const unrelatedColorSections = new Set(["rouge", "noir", "couleur"]);
     sources = sources.filter(
       (source, index) =>
-        index === 0 || !unrelatedColorSections.has(normalizeText(source.title)),
+        index === 0 || !unrelatedColorSections.has(sectionTitle(source)),
     );
 
     const failureRule = sections.find(
-      (section) => normalizeText(section.title) === "annonce",
+      (section) => sectionTitle(section) === "annonce",
     );
     if (
       failureRule &&
@@ -54,6 +58,23 @@ export async function answerRuleQuestion(
       sources.push(failureRule);
     }
     sources = sources.slice(0, 3);
+  }
+
+  if (primaryTitle === "je pisse") {
+    const situationalSources = [sources[0]];
+    const normalTurn = sections.find(
+      (section) => sectionTitle(section) === "deroulement d un tour",
+    );
+    if (normalTurn) situationalSources.push(normalTurn);
+
+    if (/\bpremier tour\b|\bpremiere annonce\b/.test(normalizeText(question))) {
+      const openingRule = sections.find(
+        (section) => sectionTitle(section) === "j ouvre a une couleur",
+      );
+      if (openingRule) situationalSources.push(openingRule);
+    }
+
+    sources = situationalSources;
   }
 
   const serializedSources = sources.map(({ id, title, content }) => ({
